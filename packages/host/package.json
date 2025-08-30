@@ -1,0 +1,21 @@
+{
+  "name": "@bmad/host",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@bmad/agent-registry": "workspace:*",
+    "@bmad/context-manager": "workspace:*",
+    "@bmad/security-manager": "workspace:*",
+    "@bmad/server-core": "workspace:*",
+    "@bmad/mcp-client": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.17.4"
+  }
+}

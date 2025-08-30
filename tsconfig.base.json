@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@bmad/core-protocol": ["packages/core-protocol/src/index.ts"],
+      "@bmad/server-core": ["packages/server-core/src/index.ts"],
+      "@bmad/agent-registry": ["packages/agent-registry/src/index.ts"],
+      "@bmad/context-manager": ["packages/context-manager/src/index.ts"],
+      "@bmad/security-manager": ["packages/security-manager/src/index.ts"],
+      "@bmad/mcp-client": ["packages/mcp-client/src/index.ts"],
+      "@bmad/host": ["packages/host/src/index.ts"]
+    }
+  }
+}

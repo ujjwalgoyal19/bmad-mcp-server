@@ -1,0 +1,37 @@
+{
+  "name": "bmad-mcp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build:ws": "npm run -ws --if-present build",
+    "typecheck:ws": "npm run -ws --if-present typecheck",
+    "test:ws": "npm run -ws --if-present test",
+    "start:demo": "npm run -w @bmad/demo start",
+    "dev:demo": "npm run -w @bmad/demo dev",
+    "turbo:build": "turbo run build",
+    "turbo:test": "turbo run test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.4",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "turbo": "^2.1.1",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

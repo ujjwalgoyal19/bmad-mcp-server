@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../agent-registry" },
+    { "path": "../context-manager" },
+    { "path": "../security-manager" },
+    { "path": "../server-core" },
+    { "path": "../mcp-client" }
+  ]
+}

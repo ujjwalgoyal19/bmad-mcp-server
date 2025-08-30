@@ -1,0 +1,13 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/core-protocol" },
+    { "path": "packages/server-core" },
+    { "path": "packages/agent-registry" },
+    { "path": "packages/context-manager" },
+    { "path": "packages/security-manager" },
+    { "path": "packages/mcp-client" },
+    { "path": "packages/host" },
+    { "path": "packages/demo" }
+  ]
+}
