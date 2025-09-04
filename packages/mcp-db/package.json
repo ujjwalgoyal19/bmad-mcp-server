@@ -1,0 +1,26 @@
+{
+  "name": "@bmad/mcp-db",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.js --external:@prisma/client --external:.prisma/client && tsc -p tsconfig.json --emitDeclarationOnly --declaration --outDir dist",
+    "dev": "bun --hot ./src/index.ts",
+    "db:push": "prisma db push",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@bmad/mcp-core": "workspace:*",
+    "@prisma/client": "^5.16.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.16.0"
+  }
+}

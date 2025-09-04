@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with: { bun-version: "1.1.0" }
+      - run: bun install --frozen-lockfile
+      - run: bunx turbo run build
+      - run: bunx turbo run typecheck
+      - run: bunx turbo run lint
+
+  release-binary:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with: { bun-version: "1.1.0" }
+      - run: bun install --frozen-lockfile
+      - run: bunx turbo run compile --filter=apps/mcp-server-cli
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: apps/mcp-server-cli/dist/bmad-mcp

@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id             String      @id @default(uuid())
+  name           String
+  gitRepoUrl     String?
+  gitRepoPath    String?
+  defaultBranch  String?
+  ownerUserId    String?
+  tags           Json?
+  lastSeenClient String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  sessions       Session[]
+  resources      Resource[]
+  toolCalls      ToolCall[]
+  snapshots      Snapshot[]
+  embeddings     Embedding[]
+}
+
+model Session {
+  id         String     @id @default(uuid())
+  projectId  String
+  project    Project    @relation(fields: [projectId], references: [id])
+  clientName String?
+  clientVer  String?
+  metadata   Json?
+  startedAt  DateTime   @default(now())
+  endedAt    DateTime?
+  toolCalls  ToolCall[]
+}
+
+model Resource {
+  id           String         @id @default(uuid())
+  projectId    String
+  project      Project        @relation(fields: [projectId], references: [id])
+  uri          String
+  mime         String?
+  title        String?
+  description  String?
+  latestBlobId String?
+  latestBlob   ResourceBlob?  @relation("LatestBlob", fields: [latestBlobId], references: [id])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  blobs        ResourceBlob[]
+
+  @@unique([projectId, uri])
+}
+
+model ResourceBlob {
+  id               String      @id @default(uuid())
+  resourceId       String
+  resource         Resource    @relation(fields: [resourceId], references: [id])
+  sha256           String
+  size             BigInt?
+  storageUrl       String
+  createdAt        DateTime    @default(now())
+  embeddings       Embedding[]
+  resourceAsLatest Resource[]  @relation("LatestBlob")
+}
+
+model ToolCall {
+  id         String    @id @default(uuid())
+  projectId  String
+  project    Project   @relation(fields: [projectId], references: [id])
+  sessionId  String?
+  session    Session?  @relation(fields: [sessionId], references: [id])
+  toolName   String
+  inputJson  Json
+  outputJson Json?
+  startedAt  DateTime  @default(now())
+  endedAt    DateTime?
+  success    Boolean?
+  error      String?
+}
+
+model Snapshot {
+  id        String   @id @default(uuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  label     String?
+  gitSha    String?
+  createdAt DateTime @default(now())
+  manifest  Json
+}
+
+model Embedding {
+  id             String       @id @default(uuid())
+  projectId      String
+  project        Project      @relation(fields: [projectId], references: [id])
+  resourceBlobId String
+  resourceBlob   ResourceBlob @relation(fields: [resourceBlobId], references: [id])
+  vector         Bytes
+  chunkMeta      Json?
+}

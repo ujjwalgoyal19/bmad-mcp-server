@@ -1,0 +1,19 @@
+{
+  "name": "@bmad/mcp-storage",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir dist && tsc -p tsconfig.json --emitDeclarationOnly --declaration --outDir dist"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.626.0"
+  }
+}

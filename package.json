@@ -1,37 +1,30 @@
 {
-  "name": "bmad-mcp",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "bmad-mcp-server",
   "workspaces": [
+    "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "build": "tsc -b",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "build:ws": "npm run -ws --if-present build",
-    "typecheck:ws": "npm run -ws --if-present typecheck",
-    "test:ws": "npm run -ws --if-present test",
-    "start:demo": "npm run -w @bmad/demo start",
-    "dev:demo": "npm run -w @bmad/demo dev",
-    "turbo:build": "turbo run build",
-    "turbo:test": "turbo run test"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.4",
-    "zod": "^3.25.76"
+    "dev:cli": "turbo run dev --filter=apps/mcp-server-cli",
+    "dev:ws": "turbo run dev --filter=apps/mcp-server-ws",
+    "dev:worker": "turbo run dev --filter=apps/worker",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "release:binary": "turbo run compile --filter=apps/mcp-server-cli",
+    "release:docker": "turbo run docker --filter=apps/mcp-server-ws",
+    "compose:up": "docker compose -f infra/docker-compose.yml up -d"
   },
   "devDependencies": {
-    "@types/node": "^24.3.0",
-    "turbo": "^2.1.1",
-    "tsx": "^4.20.5",
-    "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
-  }
+    "@types/bun": "latest",
+    "turbo": "latest",
+    "typescript": "^5.5.0",
+    "@types/node": "^20.11.30",
+    "eslint": "^9.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "packageManager": "bun@1.2.21"
 }

@@ -1,22 +1,23 @@
 {
-  "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "$schema": "https://turborepo.com/schema.json",
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"],
-      "cache": true
+      "outputs": ["dist/**"]
     },
-    "typecheck": {
-      "dependsOn": ["^typecheck"],
-      "cache": true
-    },
-    "test": {
+    "compile": {
       "dependsOn": ["build"],
-      "cache": true
+      "outputs": ["dist/**"]
     },
-    "start": {
-      "cache": false
-    }
+    "docker": {
+      "dependsOn": ["build"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {},
+    "typecheck": {},
+    "test": {}
   }
 }
-

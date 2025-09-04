@@ -1,0 +1,18 @@
+{
+  "name": "@bmad/mcp-server-cli",
+  "version": "0.0.1",
+  "type": "module",
+  "bin": {
+    "bmad-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir dist",
+    "compile": "bun build ./src/index.ts --compile --outfile dist/bmad-mcp",
+    "dev": "bun --hot ./src/index.ts"
+  },
+  "dependencies": {
+    "@bmad/mcp-core": "workspace:*",
+    "@bmad/mcp-db": "workspace:*",
+    "@bmad/mcp-storage": "workspace:*"
+  }
+}

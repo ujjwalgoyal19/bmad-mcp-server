@@ -1,0 +1,15 @@
+{
+  "name": "@bmad/mcp-server-ws",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=bun --outdir dist",
+    "dev": "bun --hot ./src/index.ts",
+    "docker": "docker build -t bmad/mcp-ws:dev ."
+  },
+  "dependencies": {
+    "@bmad/mcp-core": "workspace:*",
+    "@bmad/mcp-db": "workspace:*",
+    "@bmad/mcp-storage": "workspace:*"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "name": "@bmad/shared-config",
+  "version": "0.0.1",
+  "type": "module",
+  "private": false,
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./tsconfig.node.json": "./tsconfig.node.json",
+    "./tsconfig.browser.json": "./tsconfig.browser.json",
+    "./tsconfig.next.json": "./tsconfig.next.json",
+    "./tsconfig.test.json": "./tsconfig.test.json",
+    "./eslint/base": "./eslint/base.js",
+    "./eslint/node": "./eslint/node.js",
+    "./eslint/browser": "./eslint/browser.js",
+    "./eslint/next": "./eslint/next.js",
+    "./eslint/test": "./eslint/test.js",
+    "./vitest.config.base": "./test/vitest.config.base.ts",
+    "./tsup.config.base": "./build/tsup.config.base.ts",
+    "./zod-env": "./src/zod-env.ts"
+  },
+  "files": [
+    "tsconfig*.json",
+    "eslint/*.js",
+    "prettier/*",
+    "build/*",
+    "test/*",
+    "src/**/*",
+    "bin/*"
+  ],
+  "peerDependencies": {
+    "typescript": ">=5.4.0",
+    "eslint": ">=9.0.0",
+    "prettier": ">=3.0.0",
+    "vitest": ">=1.5.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "eslint": "^9.5.0",
+    "prettier": "^3.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-security": "^2.1.0",
+    "vitest": "^1.6.0",
+    "zod": "^3.23.0",
+    "tsup": "^8.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0"
+  },
+  "scripts": {
+    "postinstall": "node ./bin/add-husky.mjs || true",
+    "fmt": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "lint": "eslint ."
+  }
+}
