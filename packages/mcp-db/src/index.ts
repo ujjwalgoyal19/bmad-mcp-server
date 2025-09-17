@@ -80,6 +80,41 @@ export async function makeDb(url = process.env.DATABASE_URL) {
       });
       return { id: snap.id };
     },
+    async attachGit(projectId, data) {
+      await prisma.project.update({
+        where: { id: projectId },
+        data: {
+          gitRepoUrl: data.gitRepoUrl ?? undefined,
+          gitRepoPath: data.gitRepoPath ?? undefined,
+        },
+      });
+    },
+    async listResources(projectId, filter) {
+      return prisma.resource.findMany({
+        where: {
+          projectId,
+          ...(filter?.mime ? { mime: filter.mime } : {}),
+          ...(filter?.prefix ? { uri: { startsWith: filter.prefix } } : {}),
+          ...(filter?.updatedAfter || filter?.updatedBefore
+            ? {
+                updatedAt: {
+                  gte: filter?.updatedAfter,
+                  lte: filter?.updatedBefore,
+                },
+              }
+            : {}),
+        },
+        orderBy: { updatedAt: "desc" },
+        select: {
+          id: true,
+          uri: true,
+          title: true,
+          mime: true,
+          updatedAt: true,
+          latestBlobId: true,
+        },
+      }) as any;
+    },
   };
 
   return { prisma, db };

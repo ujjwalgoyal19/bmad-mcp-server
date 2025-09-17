@@ -3,10 +3,11 @@
   "version": "0.0.1",
   "type": "module",
   "bin": {
-    "bmad-mcp": "dist/index.js"
+    "bmad-mcp": "dist/index.js",
+    "bmad-mcp-cli": "dist/cli.js"
   },
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir dist",
+    "build": "bun build ./src/index.ts --target=node --outdir dist",
     "compile": "bun build ./src/index.ts --compile --outfile dist/bmad-mcp",
     "dev": "bun --hot ./src/index.ts"
   },

@@ -1,0 +1,23 @@
+{
+  "name": "@bmad/docs",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "npx mint dev",
+    "build": "npx mint build",
+    "lint": "npx mint broken-links",
+    "typecheck": "npx tsc --noEmit",
+    "preview": "npx mint dev --port 3001"
+  },
+  "dependencies": {
+    "mintlify": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "npm@11.5.1"
+}

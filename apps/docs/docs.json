@@ -1,0 +1,68 @@
+{
+  "name": "BMAD MCP",
+  "description": "Scale AI Context Management Across Any Number of Projects",
+  "version": "0.0.1",
+  "theme": "mint",
+  "favicon": "/favicon.ico",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "colors": {
+    "primary": "#0D9373",
+    "light": "#18E299",
+    "dark": "#0D9373",
+    "background": {
+      "light": "#ffffff",
+      "dark": "#090d0e"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/ujjwalgoyal19/bmad-mcp-server"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "/quick-start"
+  },
+  "navigation": [
+    {
+      "group": "Overview",
+      "pages": ["introduction", "why-bmad", "architecture"]
+    },
+    {
+      "group": "Quick Start",
+      "pages": ["quick-start", "demo"]
+    },
+    {
+      "group": "Developer Guide",
+      "pages": ["cli-guide", "websocket-server", "storage-setup"]
+    },
+    {
+      "group": "Developer Docs",
+      "pages": [
+        "developer-guide",
+        "api-reference",
+        "architecture",
+        "package-overview",
+        "contributing",
+        "troubleshooting",
+        "deployment",
+        "examples"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": ["api/core", "api/orchestration"]
+    },
+    {
+      "group": "For Judges",
+      "pages": ["judges/innovation", "judges/highlights", "judges/roadmap"]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/ujjwalgoyal19/bmad-mcp-server"
+  }
+}

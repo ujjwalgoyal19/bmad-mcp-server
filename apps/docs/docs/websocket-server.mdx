@@ -1,0 +1,632 @@
+---
+title: "WebSocket Server - Real-time Orchestration"
+description: "Enable real-time context synchronization and collaboration with BMAD MCP's WebSocket server."
+icon: "Zap"
+---
+
+# WebSocket Server - Real-time Orchestration
+
+<Info>
+  **Real-time Context Management**: BMAD MCP's WebSocket server enables live
+  collaboration and instant context synchronization across your development
+  team.
+</Info>
+
+## Overview
+
+The WebSocket server provides real-time capabilities for:
+
+- **Live Context Updates**: Instant synchronization across team members
+- **Collaborative Sessions**: Real-time collaboration on projects
+- **Event Streaming**: Live notifications and updates
+- **Performance Monitoring**: Real-time metrics and analytics
+
+## Quick Start
+
+```bash
+# Start the WebSocket server
+bun run dev:ws
+
+# Server runs on ws://localhost:8080
+# REST API available at http://localhost:3000
+```
+
+## Connection Setup
+
+### Basic Connection
+
+```javascript
+// Connect to WebSocket server
+const ws = new WebSocket("ws://localhost:8080");
+
+// Handle connection
+ws.onopen = () => {
+  console.log("Connected to BMAD MCP");
+};
+
+// Handle messages
+ws.onmessage = (event) => {
+  const message = JSON.parse(event.data);
+  console.log("Received:", message);
+};
+
+// Handle errors
+ws.onerror = (error) => {
+  console.error("WebSocket error:", error);
+};
+```
+
+### Authentication
+
+```javascript
+// Send authentication message
+ws.onopen = () => {
+  ws.send(
+    JSON.stringify({
+      type: "auth",
+      payload: {
+        token: "your-jwt-token",
+        projectId: "project-uuid",
+      },
+    })
+  );
+};
+```
+
+## Message Types
+
+### Context Operations
+
+```javascript
+// Subscribe to project context
+ws.send(
+  JSON.stringify({
+    type: "subscribe",
+    payload: {
+      projectId: "project-uuid",
+      topics: ["context", "sessions", "resources"],
+    },
+  })
+);
+
+// Update context
+ws.send(
+  JSON.stringify({
+    type: "context_update",
+    payload: {
+      projectId: "project-uuid",
+      action: "add_resource",
+      data: {
+        title: "New Feature",
+        content: "Feature implementation details",
+      },
+    },
+  })
+);
+```
+
+### Session Management
+
+```javascript
+// Start collaborative session
+ws.send(
+  JSON.stringify({
+    type: "session_start",
+    payload: {
+      projectId: "project-uuid",
+      sessionName: "Feature Development",
+      participants: ["user1", "user2"],
+    },
+  })
+);
+
+// Join existing session
+ws.send(
+  JSON.stringify({
+    type: "session_join",
+    payload: {
+      sessionId: "session-uuid",
+    },
+  })
+);
+```
+
+### Real-time Queries
+
+```javascript
+// Live context search
+ws.send(
+  JSON.stringify({
+    type: "query",
+    payload: {
+      query: "authentication strategy",
+      projectId: "project-uuid",
+      live: true,
+    },
+  })
+);
+```
+
+## Event Types
+
+### Context Events
+
+```javascript
+// Listen for context changes
+ws.onmessage = (event) => {
+  const message = JSON.parse(event.data);
+
+  switch (message.type) {
+    case "context_updated":
+      console.log("Context updated:", message.payload);
+      break;
+
+    case "resource_added":
+      console.log("New resource:", message.payload);
+      break;
+
+    case "resource_modified":
+      console.log("Resource modified:", message.payload);
+      break;
+  }
+};
+```
+
+### Session Events
+
+```javascript
+switch (message.type) {
+  case "session_started":
+    console.log("Session started:", message.payload);
+    break;
+
+  case "participant_joined":
+    console.log("Participant joined:", message.payload);
+    break;
+
+  case "session_ended":
+    console.log("Session ended:", message.payload);
+    break;
+}
+```
+
+### System Events
+
+```javascript
+switch (message.type) {
+  case "system_health":
+    console.log("System health:", message.payload);
+    break;
+
+  case "performance_metrics":
+    console.log("Performance:", message.payload);
+    break;
+
+  case "error":
+    console.error("Error:", message.payload);
+    break;
+}
+```
+
+## Advanced Features
+
+### Connection Pooling
+
+```javascript
+class MCPWebSocketManager {
+  constructor() {
+    this.connections = new Map();
+    this.reconnectAttempts = 0;
+  }
+
+  connect(projectId) {
+    const ws = new WebSocket(`ws://localhost:8080/project/${projectId}`);
+
+    ws.onopen = () => {
+      console.log(`Connected to project: ${projectId}`);
+      this.reconnectAttempts = 0;
+    };
+
+    ws.onclose = () => {
+      this.handleReconnect(projectId);
+    };
+
+    this.connections.set(projectId, ws);
+  }
+
+  handleReconnect(projectId) {
+    if (this.reconnectAttempts < 5) {
+      setTimeout(
+        () => {
+          this.reconnectAttempts++;
+          this.connect(projectId);
+        },
+        1000 * Math.pow(2, this.reconnectAttempts)
+      );
+    }
+  }
+}
+```
+
+### Message Batching
+
+```javascript
+class MessageBatcher {
+  constructor(ws, batchSize = 10, delay = 100) {
+    this.ws = ws;
+    this.batchSize = batchSize;
+    this.delay = delay;
+    this.queue = [];
+    this.timeout = null;
+  }
+
+  send(message) {
+    this.queue.push(message);
+
+    if (this.queue.length >= this.batchSize) {
+      this.flush();
+    } else if (!this.timeout) {
+      this.timeout = setTimeout(() => this.flush(), this.delay);
+    }
+  }
+
+  flush() {
+    if (this.queue.length > 0) {
+      const batch = {
+        type: "batch",
+        payload: this.queue,
+      };
+
+      this.ws.send(JSON.stringify(batch));
+      this.queue = [];
+    }
+
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
+  }
+}
+```
+
+### Heartbeat & Health Checks
+
+```javascript
+class HealthMonitor {
+  constructor(ws) {
+    this.ws = ws;
+    this.heartbeatInterval = null;
+    this.lastHeartbeat = Date.now();
+  }
+
+  start() {
+    this.heartbeatInterval = setInterval(() => {
+      this.ws.send(JSON.stringify({ type: "ping" }));
+    }, 30000);
+
+    this.ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === "pong") {
+        this.lastHeartbeat = Date.now();
+      }
+    };
+  }
+
+  getHealthStatus() {
+    const timeSinceLastHeartbeat = Date.now() - this.lastHeartbeat;
+    return timeSinceLastHeartbeat < 60000 ? "healthy" : "unhealthy";
+  }
+
+  stop() {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+    }
+  }
+}
+```
+
+## Integration Examples
+
+### React Hook
+
+```typescript
+import { useEffect, useState } from "react";
+
+function useBMADWebSocket(projectId: string) {
+  const [context, setContext] = useState(null);
+  const [ws, setWs] = useState(null);
+
+  useEffect(() => {
+    const websocket = new WebSocket(`ws://localhost:8080/project/${projectId}`);
+
+    websocket.onopen = () => {
+      websocket.send(
+        JSON.stringify({
+          type: "subscribe",
+          payload: { topics: ["context"] },
+        })
+      );
+    };
+
+    websocket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === "context_updated") {
+        setContext(message.payload);
+      }
+    };
+
+    setWs(websocket);
+
+    return () => {
+      websocket.close();
+    };
+  }, [projectId]);
+
+  const updateContext = (data) => {
+    ws?.send(
+      JSON.stringify({
+        type: "context_update",
+        payload: data,
+      })
+    );
+  };
+
+  return { context, updateContext };
+}
+```
+
+### Vue.js Composition
+
+```typescript
+import { ref, onMounted, onUnmounted } from "vue";
+
+export function useBMADWebSocket(projectId: string) {
+  const context = ref(null);
+  const ws = ref(null);
+
+  const connect = () => {
+    ws.value = new WebSocket(`ws://localhost:8080/project/${projectId}`);
+
+    ws.value.onopen = () => {
+      ws.value.send(
+        JSON.stringify({
+          type: "subscribe",
+          payload: { topics: ["context"] },
+        })
+      );
+    };
+
+    ws.value.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === "context_updated") {
+        context.value = message.payload;
+      }
+    };
+  };
+
+  const updateContext = (data) => {
+    ws.value?.send(
+      JSON.stringify({
+        type: "context_update",
+        payload: data,
+      })
+    );
+  };
+
+  onMounted(() => connect());
+  onUnmounted(() => ws.value?.close());
+
+  return { context, updateContext };
+}
+```
+
+### Node.js Client
+
+```javascript
+const WebSocket = require("ws");
+
+class BMADClient {
+  constructor(projectId) {
+    this.projectId = projectId;
+    this.ws = null;
+    this.reconnect();
+  }
+
+  reconnect() {
+    this.ws = new WebSocket(`ws://localhost:8080/project/${this.projectId}`);
+
+    this.ws.on("open", () => {
+      console.log("Connected to BMAD MCP");
+      this.subscribe();
+    });
+
+    this.ws.on("message", (data) => {
+      const message = JSON.parse(data);
+      this.handleMessage(message);
+    });
+
+    this.ws.on("close", () => {
+      setTimeout(() => this.reconnect(), 5000);
+    });
+  }
+
+  subscribe() {
+    this.ws.send(
+      JSON.stringify({
+        type: "subscribe",
+        payload: { topics: ["context", "sessions"] },
+      })
+    );
+  }
+
+  handleMessage(message) {
+    switch (message.type) {
+      case "context_updated":
+        console.log("Context updated:", message.payload);
+        break;
+      case "session_started":
+        console.log("Session started:", message.payload);
+        break;
+    }
+  }
+
+  updateContext(data) {
+    this.ws.send(
+      JSON.stringify({
+        type: "context_update",
+        payload: data,
+      })
+    );
+  }
+}
+```
+
+## Configuration
+
+### Server Configuration
+
+```typescript
+// WebSocket server configuration
+const wsConfig = {
+  port: 8080,
+  heartbeatInterval: 30000,
+  maxConnections: 1000,
+  messageTimeout: 5000,
+  enableCompression: true,
+};
+```
+
+### Client Configuration
+
+```javascript
+const clientConfig = {
+  reconnectAttempts: 5,
+  reconnectDelay: 1000,
+  heartbeatInterval: 30000,
+  messageBatchSize: 10,
+  enableCompression: true,
+};
+```
+
+## Monitoring & Debugging
+
+### Connection Monitoring
+
+```bash
+# Monitor active connections
+curl http://localhost:3000/metrics/websocket
+
+# View connection statistics
+curl http://localhost:3000/debug/connections
+```
+
+### Debug Mode
+
+```bash
+# Enable debug logging
+export DEBUG=bmcp:websocket
+
+# View WebSocket logs
+tail -f logs/websocket.log
+```
+
+## Performance Optimization
+
+### Connection Limits
+
+```typescript
+const connectionLimits = {
+  maxConnectionsPerIP: 10,
+  maxConnectionsPerProject: 50,
+  rateLimit: {
+    messages: 100,
+    window: 60000, // 1 minute
+  },
+};
+```
+
+### Message Compression
+
+```javascript
+// Enable compression for large messages
+const compressionOptions = {
+  threshold: 1024, // Compress messages > 1KB
+  level: 6,
+  memLevel: 8,
+};
+```
+
+## Security Considerations
+
+### Authentication
+
+```typescript
+// JWT-based authentication
+const authenticateConnection = (token: string) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return decoded;
+  } catch (error) {
+    throw new Error("Invalid authentication token");
+  }
+};
+```
+
+### Authorization
+
+```typescript
+// Project-based authorization
+const authorizeProjectAccess = (userId: string, projectId: string) => {
+  return db.query(
+    "SELECT * FROM project_members WHERE user_id = $1 AND project_id = $2",
+    [userId, projectId]
+  );
+};
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Connection refused?**
+
+```bash
+# Check if server is running
+ps aux | grep websocket
+
+# Check port availability
+netstat -tlnp | grep 8080
+```
+
+**Messages not received?**
+
+```bash
+# Check firewall settings
+sudo ufw status
+
+# Verify client configuration
+curl http://localhost:8080/health
+```
+
+**High latency?**
+
+```bash
+# Monitor network latency
+ping localhost
+
+# Check server performance
+curl http://localhost:3000/metrics
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="🔌 REST API" icon="Code" href="/api/core">
+    Complete API reference
+  </Card>
+  <Card title="📊 Storage Setup" icon="Database" href="/storage-setup">
+    Configure persistent storage
+  </Card>
+</CardGroup>
+
+**Enable real-time collaboration and take your development workflow to the next level!**

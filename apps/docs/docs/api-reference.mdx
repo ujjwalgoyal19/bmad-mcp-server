@@ -1,0 +1,69 @@
+---
+title: API Reference
+---
+
+# API Reference — BMAD MCP Server
+
+This page documents the main port interfaces, core types, CLI commands, and WebSocket message formats.
+
+## Port interfaces (high level)
+
+- **DbPort** (see `packages/mcp-core/src/ports.ts`): responsible for persisting domain entities.
+  - Typical methods: `createProject`, `getProject`, `upsertResource`, `createBlob`, `setLatestBlob`, `listSessions`, `createSession`, `saveSnapshot`.
+  - Implementations: `packages/mcp-db` (Prisma).
+
+- **StoragePort** (see `packages/mcp-core/src/ports.ts`): responsible for blob storage operations.
+  - Typical methods: `putObject(bucket, key, stream|buffer) -> url`, `getObject(url) -> stream`, `deleteObject(url)`.
+  - Implementations: `packages/mcp-storage` (S3/MinIO adapter).
+
+- **EmbeddingPort** (see `packages/mcp-core/src/ports.ts`): indexing and searching of embeddings.
+  - Typical methods: `index(projectId, docs[])`, `query(vector, topK) -> hits[]`, `deleteByResource(resourceId)`.
+  - Default: noop embedding implementation (see `packages/mcp-storage`), swap in Qdrant/PGVector client as needed.
+
+## Core types (conceptual)
+
+- **Project**: { id, name, meta }
+- **Session**: { id, projectId, userId?, createdAt }
+- **Resource**: { id, projectId, type, metadata }
+- **Blob**: { id, resourceId, url, size, contentType, createdAt }
+- **Snapshot**: { id, projectId, data, createdAt }
+
+## CLI commands (examples from `apps/mcp-server-cli`)
+
+- `create-project <name>` — creates a new project.
+- `save-resource --project <id> --file <path>` — uploads a file as a resource (creates blob, stores object, triggers embeddings.index).
+- `list-projects` — prints all projects.
+
+See `apps/mcp-server-cli/src/cli.ts` for exact command names and flags.
+
+## WebSocket API (conceptual)
+
+- Messages are JSON objects with a `type` field and `payload`.
+- Example events:
+  - `connect` — client handshake
+  - `createProject` — payload: { name }
+  - `saveResource` — payload: { projectId, content, metadata }
+  - `snapshotTaken` — server -> client notification when a snapshot completes
+
+## Error handling
+
+- Domain errors should be typed and thrown from core flows. Adapters should translate low-level errors to domain errors where appropriate.
+- Common error categories: ValidationError, NotFoundError, StorageError, DbError, EmbeddingError.
+
+## Configuration & environment variables
+
+- `DATABASE_URL` — required for `mcp-db` (Prisma client connection string)
+- `S3_ENDPOINT`, `S3_BUCKET`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` — for S3/MinIO storage
+- `EMBEDDING_PROVIDER_*` — optional configuration for embedding/indexing provider
+
+## Integration examples
+
+- To add a custom storage port implementation:
+  1. Implement the `StoragePort` interface (see `packages/mcp-core/src/ports.ts`).
+  2. Export a factory `makeMyStorage(config): StoragePort`.
+  3. Wire into an app by constructing a `Ctx` with `{ db, storage: makeMyStorage(...), embeddings }`.
+
+## Migration & versioning notes
+
+- Prisma schema is authoritative for DB layout (`packages/mcp-db/prisma/schema.prisma`).
+- When changing schema: update `schema.prisma`, create migration, and run `prisma migrate` or the project's migration tasks.

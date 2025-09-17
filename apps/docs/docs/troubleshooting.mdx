@@ -1,0 +1,57 @@
+---
+title: Troubleshooting
+---
+
+# Troubleshooting — BMAD MCP Server
+
+Common issues and how to resolve them.
+
+## Setup issues
+
+- Problem: `bun install` fails. Solution: Ensure Bun is installed and on PATH. Try `bun --version`.
+- Problem: Docker compose won't start. Solution: Check Docker Desktop, increase resources if containers fail to allocate memory.
+
+## Database connection problems
+
+- Ensure `DATABASE_URL` points to the local Postgres container. Use `docker ps` to find the running container and `docker logs` for errors.
+- If Prisma migrations fail, run `bunx turbo run build` and check `packages/mcp-db/prisma/migrations`.
+
+## Storage (MinIO/S3) problems
+
+- Ensure `S3_ENDPOINT` and credentials match `infra/docker-compose.yml` (default MinIO credentials are shown there).
+- Use the MinIO web UI to inspect buckets and objects.
+
+## CLI problems
+
+- If the CLI errors on startup, enable verbose logging or run the script directly with Bun to see stack traces.
+
+## WebSocket server issues
+
+- Connection refused: verify server is running and listening on expected port. Check firewall settings.
+- Unexpected disconnects: inspect server logs for unhandled exceptions.
+
+## Performance issues
+
+- Slow DB queries: enable query logging in Postgres and examine slow query plans.
+- Memory pressure: check for unbounded in-memory caches; prefer streaming large blobs from storage.
+
+## Docker and networking
+
+- If containers cannot communicate, check Docker network or `docker compose` logs. Ensure services expose correct ports in `infra/docker-compose.yml`.
+
+## Build & TypeScript errors
+
+- Run the monorepo typecheck: `bunx turbo run typecheck`. Fix type errors in the package where they originate.
+
+## Testing failures
+
+- Unit test failures: run the test for the failing package only and inspect stack traces. Use `vitest` handy flags for diagnostics.
+
+## Logging & debugging
+
+- Add structured logging to factories and core flows. Prefer passing a `logger` in `Ctx` so logs are consistent across packages.
+
+**FAQ**
+
+- Q: Where are migrations stored?
+- A: `packages/mcp-db/prisma`.

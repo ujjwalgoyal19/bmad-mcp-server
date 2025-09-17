@@ -100,3 +100,43 @@ export async function snapshot(
   for (const r of list) if (r.latestBlobId) manifest[r.id] = r.latestBlobId!;
   return ctx.db.createSnapshot(projectId, manifest, gitSha, label);
 }
+
+export async function attachGit(
+  ctx: Ctx,
+  projectId: string,
+  gitRepoUrl?: string,
+  gitRepoPath?: string
+) {
+  await ctx.db.attachGit(projectId, { gitRepoUrl, gitRepoPath });
+  return { ok: true };
+}
+
+export async function listProjectResources(
+  ctx: Ctx,
+  projectId: string,
+  filter?: {
+    prefix?: string;
+    mime?: string;
+    updatedAfter?: string;
+    updatedBefore?: string;
+  }
+) {
+  const res = await ctx.db.listResources(projectId, {
+    prefix: filter?.prefix,
+    mime: filter?.mime,
+    updatedAfter: filter?.updatedAfter
+      ? new Date(filter.updatedAfter)
+      : undefined,
+    updatedBefore: filter?.updatedBefore
+      ? new Date(filter.updatedBefore)
+      : undefined,
+  });
+  return res.map((r) => ({
+    id: r.id,
+    uri: r.uri,
+    title: r.title ?? null,
+    mime: r.mime ?? null,
+    updated_at: r.updatedAt.toISOString(),
+    latest_blob_id: r.latestBlobId ?? null,
+  }));
+}

@@ -1,0 +1,50 @@
+---
+title: Contributing
+---
+
+# Contributing — BMAD MCP Server
+
+Welcome — thank you for contributing. This page outlines how to get started, report issues, and submit PRs.
+
+## Getting started
+
+- Fork the repo and create a branch named using the pattern: `feat/<area>-short-description` or `fix/<area>-short-description`.
+
+## Code of conduct
+
+- Be respectful. Engage constructively. Follow standard open-source conduct.
+
+## Development process
+
+- Make small, focused PRs. Include tests for new behavior.
+- Keep public APIs (ports and Ctx shape) stable; if changing them, include migration notes and update all consumers.
+
+## Commit messages & branch naming
+
+- Use concise present-tense commit messages. Prefix with scope where helpful: `mcp-core: add validation to saveTextResource`.
+
+## Pull request guidelines
+
+- Open a PR against `master` (or the repository's main branch). Include a description, testing notes, and link related issues.
+- PR reviewers will check for: passing CI, meaningful tests, clear changelog entry, and adherence to style rules.
+
+## Issue reporting
+
+- Provide a minimal reproduction, environment, and expected vs actual behavior.
+
+## Testing requirements
+
+- Unit tests required for logic changes in `mcp-core`.
+- Adapter changes should include both unit tests and a small integration test when possible.
+
+## Documentation
+
+- Update `apps/docs/` and the top-level docs (README, DEVELOPER_GUIDE.md, API_REFERENCE.md) when behavior or APIs change.
+
+## Release & versioning (maintainers)
+
+- Releases are managed by maintainers. Tag releases in Git and update changelogs where appropriate.
+
+## Community resources
+
+- For questions, open an issue or reach out to maintainers in the project repository.

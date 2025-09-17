@@ -1,0 +1,390 @@
+---
+title: "CLI Guide - Complete Command Reference"
+description: "Master the BMAD MCP CLI for efficient context management and orchestration."
+icon: "Terminal"
+---
+
+# CLI Guide - Complete Command Reference
+
+<Info>
+  **BMAD MCP CLI** provides a powerful, intuitive interface for managing AI
+  context across all your projects.
+</Info>
+
+## Getting Started
+
+```bash
+# Start the CLI in development mode
+bun run dev:cli
+
+# Or run directly
+bun run apps/mcp-server-cli/src/index.ts
+```
+
+## Core Commands
+
+### Project Management
+
+| Command                               | Description          | Example                                            |
+| ------------------------------------- | -------------------- | -------------------------------------------------- |
+| `create-project <name> <description>` | Create a new project | `create-project "My App" "Full-stack application"` |
+| `list-projects`                       | List all projects    | `list-projects`                                    |
+| `switch-project <name>`               | Switch to a project  | `switch-project "My App"`                          |
+| `current-project`                     | Show current project | `current-project`                                  |
+| `delete-project <name>`               | Delete a project     | `delete-project "Old Project"`                     |
+
+### Context Management
+
+| Command                          | Description             | Example                                         |
+| -------------------------------- | ----------------------- | ----------------------------------------------- |
+| `add-resource <title> <content>` | Add context resource    | `add-resource "API Design" "RESTful endpoints"` |
+| `list-resources`                 | List project resources  | `list-resources`                                |
+| `query-context <question>`       | Search project context  | `query-context "How does auth work?"`           |
+| `show-context`                   | Display current context | `show-context`                                  |
+| `update-resource <id> <content>` | Update a resource       | `update-resource 123 "Updated content"`         |
+| `delete-resource <id>`           | Delete a resource       | `delete-resource 123`                           |
+
+### Session Management
+
+| Command                | Description           | Example                               |
+| ---------------------- | --------------------- | ------------------------------------- |
+| `start-session <name>` | Start a new session   | `start-session "Feature Development"` |
+| `end-session`          | End current session   | `end-session`                         |
+| `list-sessions`        | List project sessions | `list-sessions`                       |
+| `session-history`      | Show session history  | `session-history`                     |
+
+## Advanced Features
+
+### Bulk Operations
+
+```bash
+# Add multiple resources at once
+bulk-add --file resources.json
+
+# Export project context
+export-context --format json > backup.json
+
+# Import context from another project
+import-context --from "Other Project" --file backup.json
+```
+
+### Search and Filtering
+
+```bash
+# Search with filters
+query-context "authentication" --type security --limit 5
+
+# Search across all projects
+query-context "database design" --global
+
+# Search with date range
+query-context "API changes" --since "2024-01-01" --until "2024-12-31"
+```
+
+### Configuration
+
+```bash
+# Show current configuration
+show-config
+
+# Update CLI settings
+set-config theme dark
+set-config max-results 20
+
+# Reset to defaults
+reset-config
+```
+
+## Interactive Mode Features
+
+### Auto-completion
+
+The CLI provides intelligent auto-completion for:
+
+- Project names
+- Command names
+- Resource IDs
+- File paths
+
+```bash
+# Type and press Tab for completion
+create-project "My<Tab>
+# Completes to: create-project "My Project"
+```
+
+### Command History
+
+```bash
+# Navigate command history
+↑/↓ arrows to browse previous commands
+
+# Search history
+Ctrl+R then type to search
+```
+
+### Multi-line Input
+
+```bash
+# For long content, use multi-line mode
+add-resource "Long Description" << EOF
+This is a long description
+that spans multiple lines
+and preserves formatting
+EOF
+```
+
+## Examples and Workflows
+
+### Development Workflow
+
+```bash
+# Start a new feature
+start-session "User Authentication"
+switch-project "E-commerce App"
+
+# Add context as you work
+add-resource "Auth Requirements" "JWT, password reset, social login"
+add-resource "Database Schema" "users table with email, password_hash"
+
+# Query context during development
+query-context "How should I implement password hashing?"
+
+# End session
+end-session
+```
+
+### Code Review Preparation
+
+```bash
+# Export context for code review
+export-context --format markdown > review-context.md
+
+# Include in PR description
+cat review-context.md
+```
+
+### Team Collaboration
+
+```bash
+# Share project context with team
+export-context --format json --share > team-context.json
+
+# Import team updates
+import-context --file team-updates.json --merge
+```
+
+## Configuration Options
+
+### CLI Settings
+
+```json
+{
+  "theme": "auto",
+  "maxResults": 10,
+  "autoSave": true,
+  "backupEnabled": true,
+  "searchTimeout": 5000
+}
+```
+
+### Environment Variables
+
+```bash
+# Database connection
+export DATABASE_URL="postgresql://user:pass@localhost:5432/bmad"
+
+# Storage configuration
+export S3_ENDPOINT="http://localhost:9000"
+export S3_BUCKET="bmad"
+export S3_ACCESS_KEY="minio"
+export S3_SECRET_KEY="minio123"
+
+# CLI preferences
+export BMAD_CLI_THEME="dark"
+export BMAD_CLI_MAX_RESULTS="20"
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Command not found?**
+
+```bash
+# Ensure you're in the project directory
+pwd
+# Should be: /path/to/bmad-mcp-server
+
+# Check if CLI is running
+ps aux | grep mcp-server-cli
+```
+
+**Database connection failed?**
+
+```bash
+# Check database status
+bun run compose:ps
+
+# Restart database
+bun run compose:down && bun run compose:up
+```
+
+**Search not working?**
+
+```bash
+# Rebuild search index
+rebuild-index
+
+# Check embeddings service
+curl http://localhost:6333/health
+```
+
+### Debug Mode
+
+```bash
+# Enable debug logging
+set-config debug true
+
+# View logs
+show-logs --tail 50
+
+# Reset debug mode
+set-config debug false
+```
+
+## Performance Tips
+
+### Optimization Settings
+
+```bash
+# Increase cache size for better performance
+set-config cache-size 1000
+
+# Enable background indexing
+set-config background-indexing true
+
+# Configure batch processing
+set-config batch-size 50
+```
+
+### Memory Management
+
+```bash
+# Clear cache
+clear-cache
+
+# Show memory usage
+show-memory
+
+# Optimize for large projects
+set-config memory-optimization aggressive
+```
+
+## Integration Examples
+
+### With Development Tools
+
+<Tabs>
+  <Tab title="VS Code Extension">
+    ```bash
+    # Export context for VS Code
+    export-context --format vscode > .vscode/project-context.json
+
+    # Use in VS Code extension
+    # Context available for AI completions
+    ```
+
+  </Tab>
+
+  <Tab title="Git Hooks">
+    ```bash
+    # Pre-commit hook to validate context
+    validate-context --pre-commit
+
+    # Post-commit hook to update context
+    update-context --commit-hash $GIT_COMMIT
+    ```
+
+  </Tab>
+</Tabs>
+
+### With CI/CD
+
+```yaml
+# .github/workflows/ci.yml
+- name: Validate Context
+  run: |
+    bun run dev:cli validate-context --ci
+
+- name: Export Documentation
+  run: |
+    bun run dev:cli export-context --format markdown > docs/context.md
+```
+
+## Advanced Commands
+
+### Administrative
+
+```bash
+# Database maintenance
+db-migrate
+db-backup
+db-restore
+
+# System diagnostics
+diagnostics
+health-check
+performance-report
+```
+
+### Analytics
+
+```bash
+# Usage statistics
+show-stats
+project-analytics
+user-activity
+
+# Export metrics
+export-metrics --format prometheus
+```
+
+## Keyboard Shortcuts
+
+| Shortcut | Action               |
+| -------- | -------------------- |
+| `Ctrl+C` | Exit current command |
+| `Ctrl+D` | Exit CLI             |
+| `Ctrl+L` | Clear screen         |
+| `Ctrl+R` | Search history       |
+| `Tab`    | Auto-complete        |
+| `↑/↓`    | Navigate history     |
+
+## Getting Help
+
+```bash
+# General help
+help
+
+# Command-specific help
+help create-project
+
+# Search commands
+help --search "project"
+
+# Interactive help
+help --interactive
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="🔌 API Integration" icon="Code" href="/api/core">
+    Use BMAD MCP programmatically
+  </Card>
+  <Card title="🌐 WebSocket Server" icon="Zap" href="/websocket-server">
+    Real-time collaboration features
+  </Card>
+</CardGroup>
+
+**Master the CLI and unlock the full power of BMAD MCP's context management!**

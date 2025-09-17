@@ -1,0 +1,657 @@
+---
+title: "Core API Reference"
+description: "Complete API reference for BMAD MCP's core functionality."
+icon: "Code"
+---
+
+# Core API Reference
+
+<Info>
+  **RESTful API**: BMAD MCP provides a comprehensive REST API for programmatic
+  access to all features.
+</Info>
+
+## Base URL
+
+```
+http://localhost:3000/api/v1
+```
+
+## Authentication
+
+All API requests require authentication via JWT token:
+
+```bash
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+     http://localhost:3000/api/v1/projects
+```
+
+## Projects API
+
+### List Projects
+
+```http
+GET /api/v1/projects
+```
+
+**Response:**
+
+```json
+{
+  "projects": [
+    {
+      "id": "uuid",
+      "name": "My Project",
+      "description": "Project description",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+
+### Create Project
+
+```http
+POST /api/v1/projects
+```
+
+**Request:**
+
+```json
+{
+  "name": "New Project",
+  "description": "Project description"
+}
+```
+
+**Response:**
+
+```json
+{
+  "project": {
+    "id": "uuid",
+    "name": "New Project",
+    "description": "Project description",
+    "createdAt": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+### Get Project
+
+```http
+GET /api/v1/projects/{projectId}
+```
+
+**Response:**
+
+```json
+{
+  "project": {
+    "id": "uuid",
+    "name": "My Project",
+    "description": "Project description",
+    "resources": [...],
+    "sessions": [...],
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+### Update Project
+
+```http
+PUT /api/v1/projects/{projectId}
+```
+
+**Request:**
+
+```json
+{
+  "name": "Updated Project Name",
+  "description": "Updated description"
+}
+```
+
+### Delete Project
+
+```http
+DELETE /api/v1/projects/{projectId}
+```
+
+## Resources API
+
+### List Resources
+
+```http
+GET /api/v1/projects/{projectId}/resources
+```
+
+**Query Parameters:**
+
+- `limit` (number): Maximum number of resources (default: 50)
+- `offset` (number): Pagination offset (default: 0)
+- `search` (string): Search query
+
+**Response:**
+
+```json
+{
+  "resources": [
+    {
+      "id": "uuid",
+      "title": "API Design",
+      "content": "RESTful API design principles",
+      "type": "documentation",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "total": 25,
+  "limit": 50,
+  "offset": 0
+}
+```
+
+### Create Resource
+
+```http
+POST /api/v1/projects/{projectId}/resources
+```
+
+**Request:**
+
+```json
+{
+  "title": "New Resource",
+  "content": "Resource content",
+  "type": "documentation",
+  "tags": ["api", "design"]
+}
+```
+
+### Get Resource
+
+```http
+GET /api/v1/projects/{projectId}/resources/{resourceId}
+```
+
+### Update Resource
+
+```http
+PUT /api/v1/projects/{projectId}/resources/{resourceId}
+```
+
+**Request:**
+
+```json
+{
+  "title": "Updated Title",
+  "content": "Updated content",
+  "tags": ["updated", "api"]
+}
+```
+
+### Delete Resource
+
+```http
+DELETE /api/v1/projects/{projectId}/resources/{resourceId}
+```
+
+## Context API
+
+### Query Context
+
+```http
+POST /api/v1/projects/{projectId}/context/query
+```
+
+**Request:**
+
+```json
+{
+  "query": "How does authentication work?",
+  "limit": 5,
+  "includeEmbeddings": true
+}
+```
+
+**Response:**
+
+```json
+{
+  "results": [
+    {
+      "resource": {
+        "id": "uuid",
+        "title": "Authentication Guide",
+        "content": "JWT authentication implementation",
+        "relevance": 0.95
+      },
+      "highlights": ["JWT", "authentication", "implementation"]
+    }
+  ],
+  "total": 1,
+  "queryTime": 45
+}
+```
+
+### Get Context Summary
+
+```http
+GET /api/v1/projects/{projectId}/context/summary
+```
+
+**Response:**
+
+```json
+{
+  "summary": {
+    "totalResources": 25,
+    "totalSessions": 5,
+    "lastActivity": "2024-01-01T00:00:00Z",
+    "topTopics": ["authentication", "api", "database"],
+    "storageUsed": "2.5MB"
+  }
+}
+```
+
+## Sessions API
+
+### List Sessions
+
+```http
+GET /api/v1/projects/{projectId}/sessions
+```
+
+**Response:**
+
+```json
+{
+  "sessions": [
+    {
+      "id": "uuid",
+      "name": "Feature Development",
+      "status": "active",
+      "startedAt": "2024-01-01T00:00:00Z",
+      "participants": ["user1", "user2"]
+    }
+  ]
+}
+```
+
+### Create Session
+
+```http
+POST /api/v1/projects/{projectId}/sessions
+```
+
+**Request:**
+
+```json
+{
+  "name": "New Session",
+  "description": "Session description"
+}
+```
+
+### End Session
+
+```http
+POST /api/v1/projects/{projectId}/sessions/{sessionId}/end
+```
+
+## Search API
+
+### Global Search
+
+```http
+GET /api/v1/search
+```
+
+**Query Parameters:**
+
+- `q` (string): Search query (required)
+- `type` (string): Filter by type (projects, resources, sessions)
+- `limit` (number): Maximum results (default: 20)
+
+**Response:**
+
+```json
+{
+  "results": [
+    {
+      "type": "resource",
+      "id": "uuid",
+      "title": "Authentication Guide",
+      "project": "My Project",
+      "relevance": 0.89,
+      "highlights": ["JWT", "authentication"]
+    }
+  ],
+  "total": 15,
+  "queryTime": 23
+}
+```
+
+### Semantic Search
+
+```http
+POST /api/v1/search/semantic
+```
+
+**Request:**
+
+```json
+{
+  "query": "user management system",
+  "filters": {
+    "projectIds": ["uuid1", "uuid2"],
+    "dateRange": {
+      "start": "2024-01-01",
+      "end": "2024-12-31"
+    }
+  },
+  "limit": 10
+}
+```
+
+## Storage API
+
+### Upload File
+
+```http
+POST /api/v1/storage/upload
+```
+
+**Content-Type:** `multipart/form-data`
+
+**Form Data:**
+
+- `file`: File to upload
+- `projectId`: Associated project ID
+- `type`: File type (resource, avatar, etc.)
+
+**Response:**
+
+```json
+{
+  "file": {
+    "id": "uuid",
+    "filename": "document.pdf",
+    "size": 1024000,
+    "url": "https://storage.example.com/files/uuid",
+    "uploadedAt": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+### Download File
+
+```http
+GET /api/v1/storage/download/{fileId}
+```
+
+**Query Parameters:**
+
+- `disposition` (string): `inline` or `attachment` (default: inline)
+
+### Delete File
+
+```http
+DELETE /api/v1/storage/files/{fileId}
+```
+
+## Analytics API
+
+### Get Project Analytics
+
+```http
+GET /api/v1/projects/{projectId}/analytics
+```
+
+**Query Parameters:**
+
+- `period` (string): `day`, `week`, `month`, `year` (default: month)
+
+**Response:**
+
+```json
+{
+  "analytics": {
+    "queries": {
+      "total": 150,
+      "successful": 145,
+      "failed": 5,
+      "averageResponseTime": 45
+    },
+    "resources": {
+      "total": 25,
+      "created": 5,
+      "updated": 3,
+      "deleted": 1
+    },
+    "storage": {
+      "used": "2.5MB",
+      "files": 12,
+      "downloads": 89
+    },
+    "sessions": {
+      "total": 8,
+      "active": 2,
+      "averageDuration": 120
+    }
+  }
+}
+```
+
+## Health API
+
+### System Health
+
+```http
+GET /api/v1/health
+```
+
+**Response:**
+
+```json
+{
+  "status": "healthy",
+  "services": {
+    "database": "healthy",
+    "storage": "healthy",
+    "embeddings": "healthy",
+    "websocket": "healthy"
+  },
+  "uptime": "2d 4h 30m",
+  "version": "1.0.0"
+}
+```
+
+### Detailed Health
+
+```http
+GET /api/v1/health/detailed
+```
+
+**Response:**
+
+```json
+{
+  "status": "healthy",
+  "checks": {
+    "database": {
+      "status": "healthy",
+      "responseTime": 12,
+      "connections": {
+        "active": 5,
+        "idle": 10,
+        "total": 15
+      }
+    },
+    "storage": {
+      "status": "healthy",
+      "responseTime": 45,
+      "uploads": 150,
+      "downloads": 200
+    },
+    "embeddings": {
+      "status": "healthy",
+      "responseTime": 23,
+      "vectors": 5000,
+      "dimensions": 384
+    }
+  }
+}
+```
+
+## Error Handling
+
+All API errors follow this format:
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request parameters",
+    "details": {
+      "field": "name",
+      "reason": "required"
+    }
+  }
+}
+```
+
+### Common Error Codes
+
+| Code                   | Description                       |
+| ---------------------- | --------------------------------- |
+| `VALIDATION_ERROR`     | Invalid request parameters        |
+| `AUTHENTICATION_ERROR` | Invalid or missing authentication |
+| `AUTHORIZATION_ERROR`  | Insufficient permissions          |
+| `NOT_FOUND`            | Resource not found                |
+| `CONFLICT`             | Resource conflict                 |
+| `RATE_LIMITED`         | Too many requests                 |
+| `INTERNAL_ERROR`       | Server error                      |
+
+## Rate Limiting
+
+API requests are rate limited:
+
+- **Authenticated requests**: 1000 requests per hour
+- **Anonymous requests**: 100 requests per hour
+- **File uploads**: 50 uploads per hour
+
+Rate limit headers are included in responses:
+
+```http
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 999
+X-RateLimit-Reset: 1640995200
+```
+
+## SDK Examples
+
+### JavaScript/Node.js
+
+```javascript
+const { BMADClient } = require("bmad-mcp-sdk");
+
+const client = new BMADClient({
+  apiKey: "your-api-key",
+  baseURL: "http://localhost:3000/api/v1",
+});
+
+// Create a project
+const project = await client.projects.create({
+  name: "My Project",
+  description: "Project description",
+});
+
+// Add context
+await client.resources.create(project.id, {
+  title: "API Design",
+  content: "RESTful API design principles",
+});
+
+// Query context
+const results = await client.context.query(project.id, {
+  query: "How does authentication work?",
+});
+```
+
+### Python
+
+```python
+from bmad_mcp import BMADClient
+
+client = BMADClient(
+    api_key='your-api-key',
+    base_url='http://localhost:3000/api/v1'
+)
+
+# Create project
+project = client.projects.create(
+    name='My Project',
+    description='Project description'
+)
+
+# Add resource
+client.resources.create(
+    project_id=project['id'],
+    title='API Design',
+    content='RESTful API design principles'
+)
+
+# Query context
+results = client.context.query(
+    project_id=project['id'],
+    query='How does authentication work?'
+)
+```
+
+## Webhooks
+
+Configure webhooks for real-time notifications:
+
+```http
+POST /api/v1/webhooks
+```
+
+**Request:**
+
+```json
+{
+  "url": "https://your-app.com/webhook",
+  "events": ["resource.created", "project.updated"],
+  "secret": "webhook-secret"
+}
+```
+
+### Supported Events
+
+- `project.created`
+- `project.updated`
+- `project.deleted`
+- `resource.created`
+- `resource.updated`
+- `resource.deleted`
+- `session.started`
+- `session.ended`
+- `context.queried`
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="🔌 Orchestration API" icon="Network" href="/api/orchestration">
+    Advanced orchestration features
+  </Card>
+  <Card title="🌐 WebSocket API" icon="Zap" href="/websocket-server">
+    Real-time API documentation
+  </Card>
+</CardGroup>
+
+**Build powerful integrations with BMAD MCP's comprehensive API!**

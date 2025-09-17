@@ -1,0 +1,251 @@
+---
+title: "Interactive Demo & Examples"
+description: "Try BMAD MCP with copy-paste examples and real-world use cases."
+icon: "Play"
+---
+
+# Interactive Demo & Examples
+
+<Warning>
+  **Live Demo**: Copy-paste these examples to experience BMAD MCP's context
+  management capabilities firsthand.
+</Warning>
+
+## Demo Setup
+
+First, ensure you have BMAD MCP running:
+
+```bash
+# Start the infrastructure
+bun run compose:up
+
+# Start the CLI
+bun run dev:cli
+```
+
+## Example 1: Multi-Project Context Management
+
+<Tabs>
+  <Tab title="CLI Commands">
+    ```bash
+    # Create two different projects
+    create-project "E-commerce Platform" "Full-stack e-commerce with React & Node.js"
+    create-project "Mobile Fitness App" "React Native fitness tracking application"
+
+    # Add context to first project
+    switch-project "E-commerce Platform"
+    add-resource "Tech Stack" "Frontend: React, Backend: Node.js, Database: PostgreSQL"
+    add-resource "API Design" "RESTful APIs with GraphQL for product catalog"
+    add-resource "Authentication" "JWT tokens with refresh mechanism"
+
+    # Switch to second project
+    switch-project "Mobile Fitness App"
+    add-resource "Tech Stack" "React Native, Redux, SQLite"
+    add-resource "Features" "Workout tracking, progress analytics, social features"
+    add-resource "API Integration" "REST APIs for data synchronization"
+
+    # Query context from current project
+    query-context "What's my authentication strategy?"
+    ```
+
+  </Tab>
+
+  <Tab title="Expected Output">
+    ```bash
+    BMAD MCP> create-project "E-commerce Platform" "Full-stack e-commerce with React & Node.js"
+    ✅ Project "E-commerce Platform" created successfully
+
+    BMAD MCP> switch-project "E-commerce Platform"
+    🔄 Switched to project: E-commerce Platform
+
+    BMAD MCP> query-context "What's my authentication strategy?"
+    Based on your project context:
+    - JWT tokens with refresh mechanism
+    - Integrated with PostgreSQL backend
+    - RESTful API authentication endpoints
+    ```
+
+  </Tab>
+</Tabs>
+
+## Example 2: Context-Aware AI Responses
+
+```bash
+# Add comprehensive project context
+add-resource "User Management" "User registration, profiles, preferences"
+add-resource "Payment Integration" "Stripe payment processing, webhooks"
+add-resource "Deployment" "Docker containers, AWS ECS, CI/CD pipeline"
+
+# Ask context-aware questions
+query-context "How should I implement user authentication?"
+query-context "What's my deployment strategy?"
+query-context "How do payments integrate with user accounts?"
+```
+
+## Example 3: Real-time Collaboration
+
+<Tabs>
+  <Tab title="Terminal 1 - Developer A">
+    ```bash
+    # Developer A working on API design
+    switch-project "E-commerce Platform"
+    add-resource "API Routes" "/api/products, /api/orders, /api/users"
+    add-resource "Data Models" "Product, Order, User, Cart schemas"
+    ```
+  </Tab>
+
+  <Tab title="Terminal 2 - Developer B">
+    ```bash
+    # Developer B sees real-time updates
+    switch-project "E-commerce Platform"
+    query-context "What API routes are available?"
+    # Instantly sees Developer A's additions
+    ```
+  </Tab>
+</Tabs>
+
+## Example 4: Semantic Search Capabilities
+
+```bash
+# Add various types of context
+add-resource "Error Handling" "Global error boundaries, logging, monitoring"
+add-resource "Performance" "Caching strategies, database optimization"
+add-resource "Security" "Input validation, XSS protection, CSRF tokens"
+
+# Semantic search finds relevant information
+query-context "How do I handle errors in my application?"
+query-context "What security measures should I implement?"
+query-context "How can I improve performance?"
+```
+
+## Advanced Examples
+
+### Large Codebase Management
+
+```bash
+# Simulate a large project with multiple modules
+add-resource "Frontend Module" "React components, state management, routing"
+add-resource "Backend Module" "Express server, middleware, database models"
+add-resource "Infrastructure" "Docker, Kubernetes, monitoring, logging"
+
+# Context-aware development
+query-context "How does the frontend communicate with the backend?"
+query-context "What's the deployment pipeline?"
+```
+
+### Multi-tenant Architecture
+
+```bash
+# Different client contexts
+create-project "Client A - SaaS Platform" "Multi-tenant SaaS application"
+create-project "Client B - Mobile App" "Native mobile application"
+
+# Client-specific context
+switch-project "Client A - SaaS Platform"
+add-resource "Tenant Isolation" "Database schemas, API keys, resource limits"
+add-resource "Billing Integration" "Subscription management, usage tracking"
+
+switch-project "Client B - Mobile App"
+add-resource "Mobile Optimization" "Offline sync, push notifications, app store deployment"
+```
+
+## WebSocket Real-time Demo
+
+```bash
+# Start WebSocket server for real-time features
+bun run dev:ws
+
+# In another terminal, connect via WebSocket
+# The server provides real-time context updates
+# Try modifying context and see live updates
+```
+
+## Performance Benchmarks
+
+Test BMAD MCP's scalability:
+
+```bash
+# Create multiple projects quickly
+for i in {1..10}; do
+  create-project "Project $i" "Test project $i"
+done
+
+# Add bulk context
+add-resource "Bulk Test" "Testing scalability with large datasets"
+
+# Query performance
+time query-context "performance test"
+```
+
+## Integration Examples
+
+### With Popular AI Tools
+
+<Tabs>
+  <Tab title="GitHub Copilot">
+    ```bash
+    # BMAD MCP provides context for Copilot
+    switch-project "E-commerce Platform"
+    query-context "Generate a product API endpoint"
+
+    # Copilot gets full project context
+    # Results in more accurate, context-aware code
+    ```
+
+  </Tab>
+
+  <Tab title="ChatGPT/Claude">
+    ```bash
+    # Export context for external AI tools
+    export-context --format json > project-context.json
+
+    # Use with any AI tool for better responses
+    # Context includes tech stack, architecture, requirements
+    ```
+
+  </Tab>
+</Tabs>
+
+## Troubleshooting Demo
+
+```bash
+# Test error handling
+query-context "nonexistent topic"
+# Should gracefully handle missing context
+
+# Test recovery
+add-resource "Recovery Test" "Testing error recovery mechanisms"
+query-context "recovery test"
+```
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card title="📚 CLI Guide" icon="Terminal" href="/cli-guide">
+    Complete command reference
+  </Card>
+  <Card title="🔌 API Reference" icon="Code" href="/api/core">
+    REST API documentation
+  </Card>
+  <Card title="🌐 WebSocket" icon="Zap" href="/websocket-server">
+    Real-time features
+  </Card>
+</CardGroup>
+
+## Demo Summary
+
+<Check>
+  **✅ Multi-Project Support**: Seamlessly manage context across projects
+</Check>
+
+<Check>
+  **✅ Real-time Updates**: Live synchronization across team members
+</Check>
+
+<Check>**✅ Semantic Search**: Intelligent context retrieval</Check>
+
+<Check>**✅ Scalable Architecture**: Handles large codebases and teams</Check>
+
+<Check>**✅ Developer Experience**: Intuitive CLI with powerful features</Check>
+
+**Ready to revolutionize your development workflow?** Try these examples and experience the power of BMAD MCP's context management!

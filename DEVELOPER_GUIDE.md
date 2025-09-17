@@ -1,0 +1,117 @@
+
+# DEVELOPER GUIDE — BMAD MCP Server
+
+This guide helps new developers set up a local environment, understand the monorepo, and start contributing.
+
+## 1) Development environment setup
+
+### Prerequisites
+
+- Bun (recommended runtime and package manager). Install from [bun.sh](https://bun.sh).
+- Docker & docker-compose for local infra (Postgres, MinIO, qdrant optional).
+- Git.
+
+### Install dependencies
+
+```pwsh
+bun install
+```
+
+### Start local infra for development
+
+```pwsh
+docker compose -f infra/docker-compose.yml up -d
+```
+
+**Example environment variables** (set in your shell or use a .env file)
+
+```pwsh
+DATABASE_URL='postgresql://postgres:postgres@localhost:5432/bmad'
+S3_ENDPOINT='http://localhost:9000'
+S3_BUCKET='bmad'
+S3_ACCESS_KEY='minio'
+S3_SECRET_KEY='minio123'
+```
+
+## 2) Monorepo structure
+
+- `apps/`
+  - `mcp-server-cli/` — CLI example wiring ports into a runnable program
+  - `mcp-server-ws/` — WebSocket server
+  - `docs/` — documentation site
+- `packages/`
+  - `mcp-core/` — core flows, types, and port interfaces (DbPort, StoragePort, EmbeddingPort)
+  - `mcp-db/` — Prisma-backed DbPort implementation
+  - `mcp-storage/` — S3-compatible storage + embedding stub
+  - `mcp-analysis/` — analysis helpers
+  - `shared-config/` — shared ESLint/TS config and tooling
+- `infra/` — docker-compose and local infra resources
+
+## 3) Port-based architecture (contract)
+
+- `packages/mcp-core/src/ports.ts` defines the port interfaces and `Ctx` object used for dependency injection.
+- Ports are implemented in adapter packages (for example `packages/mcp-db/src/index.ts` exports a `makeDb(ctx)` factory that satisfies `DbPort`).
+- Use factories when wiring in `apps/*` to create concrete port implementations and pass a `Ctx` into core functions.
+
+### Contract (simple)
+
+Input: `Ctx` containing `{ db, storage, embeddings }`.
+Output: core flows return domain objects (projects, sessions, resources) or throw typed errors.
+Error modes: validation errors, db errors, storage errors; adapters should wrap underlying errors into domain-specific error types.
+
+## 4) Running components
+
+- Run the CLI example (wires DB + storage + noop embeddings):
+
+```pwsh
+bun run apps/mcp-server-cli/src/index.ts
+```
+
+- Run the WebSocket server (example):
+
+```pwsh
+bun run apps/mcp-server-ws/src/index.ts
+```
+
+- Build & test across the monorepo using Turbo (CI uses Bunx):
+
+```pwsh
+bunx turbo run build
+bunx turbo run typecheck
+bunx turbo run lint
+```
+
+## 5) Testing strategy
+
+- Unit tests: follow the existing test setup in `packages/*/test` (project uses vitest in shared-config/test config).
+- Add tests that mock ports when testing `mcp-core` logic. Provide small fixtures for DB/Storage where helpful.
+- Integration tests: use a Docker-compose local infra to run Postgres and MinIO; seed minimal data and run CLI commands or direct function calls.
+
+## 6) Debugging tips
+
+- Enable debug logging by instrumenting factories or passing an optional logger into `Ctx`.
+- For DB issues, inspect `infra/docker-compose.yml` and connect via psql client to the running Postgres container.
+- For storage issues, inspect MinIO web UI and logs.
+
+## 7) Code style & conventions
+
+- Use TypeScript strict mode when adding types. Prefer narrow union types and explicit return types on exported functions.
+- Follow ESLint rules under `packages/shared-config/eslint`.
+- Commit message convention: use present-tense, short summary; include scope where useful (e.g., `mcp-core: add saveTextResource validation`).
+
+## 8) Adding new features
+
+- Identify whether the change belongs in `mcp-core` (behavior), an adapter package, or an app.
+- For new adapter implementations, create a `makeX` factory returning the port shape defined in `packages/mcp-core/src/ports.ts`.
+- Update docs under `apps/docs/` and the `PACKAGE_OVERVIEW.md` file.
+
+## 9) Performance considerations
+
+- Use connection pooling for Postgres; ensure Prisma client is shared rather than re-created per request.
+- For embeddings, use batch operations when indexing many items.
+- Consider caching frequently-read metadata in memory or Redis when necessary.
+
+## 10) Next steps
+
+- Read `API_REFERENCE.md` and `ARCHITECTURE.md` for deeper details of ports and data flow.
+

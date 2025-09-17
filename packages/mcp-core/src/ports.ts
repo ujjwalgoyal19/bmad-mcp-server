@@ -40,6 +40,28 @@ export interface DbPort {
     gitSha?: string | null,
     label?: string | null
   ): Promise<{ id: string }>;
+  attachGit(
+    projectId: string,
+    data: { gitRepoUrl?: string | null; gitRepoPath?: string | null }
+  ): Promise<void>;
+  listResources(
+    projectId: string,
+    filter?: {
+      prefix?: string;
+      mime?: string;
+      updatedAfter?: Date;
+      updatedBefore?: Date;
+    }
+  ): Promise<
+    Array<{
+      id: string;
+      uri: string;
+      title?: string | null;
+      mime?: string | null;
+      updatedAt: Date;
+      latestBlobId?: string | null;
+    }>
+  >;
 }
 
 export interface StoragePort {
